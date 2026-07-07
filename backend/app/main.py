@@ -5,6 +5,8 @@ Step 1 scope: app boots, connects to Postgres, exposes a health check.
 Search endpoints, models, and collectors are added in later steps.
 """
 
+import asyncio
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
@@ -13,6 +15,7 @@ from app.api import import_listing, search
 from app.core.config import get_settings
 from app.db.session import engine
 from app.scripts.seed import seed
+from app.telegram.bot import start_bot_polling
 
 settings = get_settings()
 
@@ -45,6 +48,17 @@ async def seed_sample_data() -> None:
     already exist. Remove once a real collector populates the DB.
     """
     await seed()
+
+
+@app.on_event("startup")
+async def launch_telegram_bot() -> None:
+    """
+    Starts the Telegram bot's long-polling loop as a background task
+    so it runs alongside the API in the same process — no separate
+    worker service needed for the MVP. No-ops if TELEGRAM_BOT_TOKEN
+    isn't configured (see app/telegram/bot.py).
+    """
+    asyncio.create_task(start_bot_polling())
 
 
 @app.get("/health", tags=["system"])

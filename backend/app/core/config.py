@@ -20,6 +20,7 @@ class Settings(BaseSettings):
 
     database_url: str
     redis_url: str = "redis://redis:6379/0"
+    telegram_bot_token: str | None = None
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
