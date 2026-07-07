@@ -12,6 +12,7 @@ from sqlalchemy import text
 from app.api import search
 from app.core.config import get_settings
 from app.db.session import engine
+from app.scripts.seed import seed
 
 settings = get_settings()
 
@@ -32,6 +33,17 @@ app.add_middleware(
 )
 
 app.include_router(search.router, tags=["search"])
+
+
+@app.on_event("startup")
+async def seed_sample_data() -> None:
+    """
+    MVP-only: auto-seed sample listings on every startup so the live
+    demo always has data, even on Render's free tier (no shell access
+    to run the seed script manually). Idempotent — skips rows that
+    already exist. Remove once a real collector populates the DB.
+    """
+    await seed()
 
 
 @app.get("/health", tags=["system"])
