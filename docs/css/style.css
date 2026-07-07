@@ -100,6 +100,41 @@ body {
   color: var(--text);
 }
 
+.import-section {
+  margin-top: 8px;
+}
+
+.import-section summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 8px 0;
+}
+
+.import-form {
+  display: flex;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.import-form input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.import-form button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #0f172a;
+  font-weight: 700;
+}
+
 .status {
   color: var(--text-muted);
   font-size: 0.85rem;

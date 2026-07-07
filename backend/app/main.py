@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
-from app.api import search
+from app.api import import_listing, search
 from app.core.config import get_settings
 from app.db.session import engine
 from app.scripts.seed import seed
@@ -28,11 +28,12 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["GET"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
 app.include_router(search.router, tags=["search"])
+app.include_router(import_listing.router, tags=["import"])
 
 
 @app.on_event("startup")

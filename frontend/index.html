@@ -47,6 +47,8 @@
               <option value="">Всі</option>
               <option value="ebay">eBay</option>
               <option value="olx">OLX</option>
+              <option value="prom">Prom.ua</option>
+              <option value="rozetka">Rozetka</option>
             </select>
           </label>
           <label>
@@ -67,6 +69,22 @@
             </select>
           </label>
         </div>
+      </details>
+    </section>
+
+    <section class="import-section">
+      <details>
+        <summary>➕ Додати товар з OLX/Prom за посиланням</summary>
+        <form id="import-form" class="import-form">
+          <input
+            type="url"
+            id="import-url"
+            placeholder="https://www.olx.ua/d/uk/obyavlenie/..."
+            required
+          />
+          <button type="submit">Додати</button>
+        </form>
+        <p id="import-status" class="status"></p>
       </details>
     </section>
 

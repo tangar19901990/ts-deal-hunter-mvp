@@ -56,6 +56,40 @@ const queryInput = document.getElementById("query");
 const statusEl = document.getElementById("status");
 const resultsEl = document.getElementById("results");
 
+const importForm = document.getElementById("import-form");
+const importUrlInput = document.getElementById("import-url");
+const importStatusEl = document.getElementById("import-status");
+
+importForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const url = importUrlInput.value.trim();
+  if (!url) return;
+
+  importStatusEl.textContent = "Додаю товар...";
+
+  if (!API_BASE) {
+    importStatusEl.textContent = "Бекенд не підключений — імпорт недоступний у демо-режимі.";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/listings/import`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Помилка ${res.status}`);
+    }
+    const listing = await res.json();
+    importStatusEl.textContent = `Додано: ${listing.title} — ${listing.price} ${listing.currency}`;
+    importUrlInput.value = "";
+  } catch (err) {
+    importStatusEl.textContent = `Не вдалося додати: ${err.message}`;
+  }
+});
+
 const filters = {
   minPrice: document.getElementById("filter-min-price"),
   maxPrice: document.getElementById("filter-max-price"),
