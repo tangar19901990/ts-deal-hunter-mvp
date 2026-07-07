@@ -6,8 +6,10 @@ Search endpoints, models, and collectors are added in later steps.
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
+from app.api import search
 from app.core.config import get_settings
 from app.db.session import engine
 
@@ -18,6 +20,18 @@ app = FastAPI(
     description="Search engine for finding the cheapest listings across marketplaces.",
     version="0.1.0-mvp",
 )
+
+# MVP CORS: allow any origin. The frontend is deployed on GitHub Pages
+# (a different origin than the API), so this is required for it to work.
+# Tighten to a specific origin list before this leaves MVP status.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
+
+app.include_router(search.router, tags=["search"])
 
 
 @app.get("/health", tags=["system"])
