@@ -6,3 +6,4 @@ runs in tests.
 
 from app.models.marketplace import Marketplace  # noqa: F401
 from app.models.listing import Listing  # noqa: F401
+from app.models.saved_search import SavedSearch  # noqa: F401
