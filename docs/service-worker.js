@@ -1,4 +1,4 @@
-const CACHE_NAME = "deal-hunter-shell-v1";
+const CACHE_NAME = "deal-hunter-shell-v2";
 const APP_SHELL = [
   "./index.html",
   "./css/style.css",
