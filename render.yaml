@@ -16,6 +16,8 @@ services:
         value: "false"
       - key: REDIS_URL
         value: redis://localhost:6379/0
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
 
 databases:
   - name: ts-deal-hunter-db
