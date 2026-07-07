@@ -10,7 +10,7 @@
 
 // Set this to your deployed backend URL once it's live, e.g.
 // "https://api.tsdealhunter.com" — leave empty to always use mock data.
-const API_BASE = "";
+const API_BASE = "https://ts-deal-hunter-api.onrender.com";
 
 const MOCK_RESULTS = [
   {
