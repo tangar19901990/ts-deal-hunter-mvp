@@ -203,6 +203,30 @@ def scrape(category_url: str, pages: int, delay: float) -> list[Listing]:
     return all_listings
 
 
+def import_via_api(listings: list[Listing], api_base: str) -> None:
+    """
+    Feed each discovered listing into the backend's existing
+    POST /listings/import — it re-fetches and parses the URL itself
+    (see app/services/url_import.py), so this only ever hands it a URL,
+    the same contract the frontend's manual-paste import form uses.
+    """
+    endpoint = f"{api_base.rstrip('/')}/listings/import"
+    session = requests.Session()
+    ok, failed = 0, 0
+
+    for listing in listings:
+        try:
+            response = session.post(endpoint, json={"url": listing.url}, timeout=REQUEST_TIMEOUT)
+            response.raise_for_status()
+            ok += 1
+        except requests.RequestException as exc:
+            failed += 1
+            detail = exc.response.text if getattr(exc, "response", None) is not None else str(exc)
+            print(f"Import failed for {listing.url}: {detail}", file=sys.stderr)
+
+    print(f"Imported {ok}/{len(listings)} listings via {endpoint} ({failed} failed)")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Scrape a Rozetka.ua category/search page.")
     parser.add_argument(
@@ -211,6 +235,11 @@ def main() -> None:
     parser.add_argument("--pages", type=int, default=1, help="Number of pages to crawl")
     parser.add_argument("--delay", type=float, default=DEFAULT_DELAY, help="Seconds between requests")
     parser.add_argument("--out", default="rozetka_listings.json", help="Output JSON file path")
+    parser.add_argument(
+        "--import-api",
+        metavar="API_BASE_URL",
+        help="If set, POST each discovered listing's URL to <API_BASE_URL>/listings/import",
+    )
     args = parser.parse_args()
 
     try:
@@ -226,6 +255,9 @@ def main() -> None:
         json.dump([asdict(l) for l in listings], f, ensure_ascii=False, indent=2)
 
     print(f"Saved {len(listings)} listings to {args.out}")
+
+    if args.import_api and listings:
+        import_via_api(listings, args.import_api)
 
 
 if __name__ == "__main__":
